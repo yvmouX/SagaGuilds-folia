@@ -1,0 +1,24 @@
+name: SagaGuild
+version: '${version}'
+main: cn.i7mc.sagaguild.SagaGuild
+api-version: '1.20'
+authors: [Saga]
+description: 一个全功能的Minecraft公会插件
+commands:
+  guild:
+    description: 公会主命令
+    aliases: [g]
+    usage: /guild <子命令> [参数...]
+permissions:
+  guild.create:
+    description: 创建公会权限
+    default: true
+  guild.admin:
+    description: 管理员权限
+    default: op
+  guild.claim:
+    description: 领地声明权限
+    default: true
+  guild.war:
+    description: 发起公会战权限
+    default: true
