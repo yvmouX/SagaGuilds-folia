@@ -1,6 +1,7 @@
 package cn.i7mc.sagaguild;
 
 import cn.i7mc.sagaguild.commands.CommandManager;
+import cn.i7mc.sagaguild.commands.subcommands.InviteCommand;
 import cn.i7mc.sagaguild.config.ConfigManager;
 import cn.i7mc.sagaguild.data.DatabaseManager;
 import cn.i7mc.sagaguild.data.dao.JoinRequestDAO;
@@ -88,6 +89,9 @@ public class SagaGuild extends JavaPlugin {
         if (databaseManager != null) {
             databaseManager.close();
         }
+
+        // 停止邀请过期检查任务
+        InviteCommand.stopExpirationChecker();
 
         // 卸载资源
         getLogger().info("SagaGuild 插件已成功卸载！");

@@ -4,6 +4,10 @@ import cn.i7mc.sagaguild.SagaGuild;
 import cn.i7mc.sagaguild.commands.subcommands.*;
 import cn.i7mc.sagaguild.commands.subcommands.ListCommand;
 import cn.i7mc.sagaguild.commands.subcommands.RelationCommand;
+import cn.i7mc.sagaguild.commands.subcommands.InviteCommand;
+import cn.i7mc.sagaguild.commands.subcommands.InviteAcceptCommand;
+import cn.i7mc.sagaguild.commands.subcommands.InviteRejectCommand;
+import cn.i7mc.sagaguild.commands.subcommands.LeaveCommand;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +48,14 @@ public class CommandManager {
 
         // 注册加入公会命令
         registerSubCommand(new JoinCommand(plugin));
+
+        // 注册邀请玩家命令
+        registerSubCommand(new InviteCommand(plugin));
+        registerSubCommand(new InviteAcceptCommand(plugin));
+        registerSubCommand(new InviteRejectCommand(plugin));
+
+        // 注册离开公会命令
+        registerSubCommand(new LeaveCommand(plugin));
 
         // 注册领地命令
         registerSubCommand(new ClaimCommand(plugin));

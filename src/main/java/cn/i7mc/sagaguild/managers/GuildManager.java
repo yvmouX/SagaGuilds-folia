@@ -222,12 +222,7 @@ public class GuildManager {
             return false;
         }
 
-        // 发送邀请消息
-        String message = plugin.getConfigManager().getMessage("members.invite-received",
-                "guild", guild.getName());
-        target.sendMessage(message);
-
-        // TODO: 实现邀请过期机制
+        // 邀请过期机制已在InviteCommand类中实现，默认1分钟后过期
 
         return true;
     }
