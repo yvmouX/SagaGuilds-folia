@@ -117,7 +117,10 @@ src/
 │   │               │   ├── TaskManager.java               # 任务管理器
 │   │               │   ├── ChatManager.java               # 聊天管理器
 │   │               │   ├── ActivityManager.java           # 活动管理器
-│   │               │   └── AllianceManager.java           # 联盟管理器
+│   │               │   ├── AllianceManager.java           # 联盟管理器
+│   │               │   └── RankingManager.java            # 排行榜管理器
+│   │               ├── placeholders/                      # PlaceholderAPI扩展
+│   │               │   └── SagaGuildPlaceholders.java     # 占位符扩展类
 │   │               └── utils/                             # 工具类
 │   │                   ├── ItemBuilder.java               # 物品构建器
 │   │                   ├── ItemUtil.java                  # 物品工具类（兼容性处理）
@@ -917,3 +920,74 @@ public class TeamUtil {
 - [ClickEvent](https://jd.advntr.dev/api/4.14.0/net/kyori/adventure/text/event/ClickEvent.html)
 - [HoverEvent](https://jd.advntr.dev/api/4.14.0/net/kyori/adventure/text/event/HoverEvent.html)
 - [ClickEvent.Action](https://jd.advntr.dev/api/4.14.0/net/kyori/adventure/text/event/ClickEvent.Action.html)
+
+### 8. PlaceholderAPI 占位符系统
+
+#### 功能描述
+PlaceholderAPI 占位符系统为 SagaGuild 提供了与其他插件的集成能力，允许在聊天、记分板、菜单等地方显示公会信息。系统提供以下功能：
+- 玩家公会信息占位符 - 显示玩家当前所在公会的各种信息
+- 公会排行榜占位符 - 显示公会在各种排行榜中的排名和数据
+- 支持离线玩家查询 - 即使玩家不在线也能获取其公会信息
+- 优雅的错误处理 - 所有占位符在失败时返回空字符串，不会显示错误信息
+- 高性能缓存机制 - 排行榜数据使用5分钟缓存，避免频繁数据库查询
+
+#### 支持的占位符
+
+##### 玩家公会信息占位符
+- `%sg_currentguild_name%` - 玩家所在公会名称
+- `%sg_currentguild_tag%` - 玩家所在公会标签
+- `%sg_currentguild_description%` - 玩家所在公会描述
+- `%sg_currentguild_level%` - 玩家所在公会等级
+- `%sg_currentguild_role%` - 玩家在公会的职位（OWNER/ADMIN/MEMBER等）
+- `%sg_currentguild_owner%` - 玩家所在公会会长名称
+- `%sg_currentguild_currentmembers%` - 玩家所在公会当前人数
+- `%sg_currentguild_maxmembers%` - 玩家所在公会最大人数
+- `%sg_currentguild_money%` - 玩家所在公会银行余额
+- `%sg_currentguild_warstats%` - 玩家所在公会战争状态（和平/战争中）
+- `%sg_currentguild_allystats%` - 玩家所在公会联盟关系（无联盟/已结盟）
+
+##### 公会排行榜占位符
+排行榜占位符支持动态排名数字，格式为：`%sg_top[排名]_[类型]_[数据]%`
+
+###### 银行资金排行榜
+- `%sg_top1_money_gname%` - 银行资金第1名公会名称
+- `%sg_top1_money_value%` - 银行资金第1名公会的资金值
+- 支持 top1 到 top10 的任意排名
+
+###### 成员数量排行榜
+- `%sg_top3_members_gname%` - 成员数量第3名公会名称
+- `%sg_top3_members_value%` - 成员数量第3名公会的人数
+- 支持 top1 到 top10 的任意排名
+
+###### 公会等级排行榜
+- `%sg_top5_level_gname%` - 等级第5名公会名称
+- `%sg_top5_level_value%` - 等级第5名公会的等级值
+- 支持 top1 到 top10 的任意排名
+
+#### 实现内容
+1. 创建了排行榜管理器
+   - `RankingManager` 类管理所有排行榜数据
+   - 实现了银行余额、成员数量、等级三种排行榜
+   - 使用 ConcurrentHashMap 缓存排行榜数据
+   - 缓存时间为5分钟，自动过期刷新
+
+2. PlaceholderAPI 扩展实现
+   - `SagaGuildPlaceholders` 类继承自 PlaceholderExpansion
+   - 注册标识符为 `sg`（符合官方规范）
+   - 统一处理所有占位符，使用标准格式
+   - 使用正则表达式解析动态排行榜占位符
+
+3. 与主插件集成
+   - 在 plugin.yml 中添加了 PlaceholderAPI 软依赖
+   - 在插件启动时自动检测并注册扩展
+   - 在 messages.yml 中添加了可配置的状态文本
+
+4. 性能优化
+   - 排行榜数据使用缓存机制，减少数据库查询
+   - 支持批量获取数据，提高查询效率
+   - 使用流式处理和Lambda表达式优化代码
+
+5. 兼容性处理
+   - 修复了与现有管理器的集成问题
+   - 确保在 PlaceholderAPI 不存在时插件仍能正常运行
+   - 支持离线玩家数据查询
