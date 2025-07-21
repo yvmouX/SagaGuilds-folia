@@ -40,6 +40,12 @@ src/
 │   │               │       ├── ManagerCommand.java        # 公会管理命令
 │   │               │       ├── RelationCommand.java       # 公会关系命令
 │   │               │       ├── ActivityCommand.java       # 活动命令
+│   │               │       ├── AdminCommand.java          # 管理员命令
+│   │               │       ├── DisbandCommand.java        # 解散公会命令
+│   │               │       ├── InviteCommand.java         # 邀请玩家命令
+│   │               │       ├── InviteAcceptCommand.java   # 接受邀请命令
+│   │               │       ├── InviteRejectCommand.java   # 拒绝邀请命令
+│   │               │       ├── LeaveCommand.java          # 离开公会命令
 │   │               │       └── activity/                  # 活动子命令
 │   │               │           ├── ActivityCreateCommand.java  # 创建活动命令
 │   │               │           ├── ActivityInfoCommand.java    # 活动信息命令
@@ -438,7 +444,26 @@ public class CommandManager {
         // 注册所有子命令
         registerSubCommand(new CreateCommand(plugin));
         registerSubCommand(new InfoCommand(plugin));
-        // 注册其他子命令...
+        registerSubCommand(new HelpCommand(plugin));
+        registerSubCommand(new ClaimCommand(plugin));
+        registerSubCommand(new UnclaimCommand(plugin));
+        registerSubCommand(new BankCommand(plugin));
+        registerSubCommand(new ChatCommand(plugin));
+        registerSubCommand(new LevelCommand(plugin));
+        registerSubCommand(new TaskCommand(plugin));
+        registerSubCommand(new WarCommand(plugin));
+        registerSubCommand(new AllyCommand(plugin));
+        registerSubCommand(new ListCommand(plugin));
+        registerSubCommand(new JoinCommand(plugin));
+        registerSubCommand(new ManagerCommand(plugin));
+        registerSubCommand(new RelationCommand(plugin));
+        registerSubCommand(new ActivityCommand(plugin));
+        registerSubCommand(new AdminCommand(plugin));
+        registerSubCommand(new DisbandCommand(plugin));
+        registerSubCommand(new InviteCommand(plugin));
+        registerSubCommand(new InviteAcceptCommand(plugin));
+        registerSubCommand(new InviteRejectCommand(plugin));
+        registerSubCommand(new LeaveCommand(plugin));
     }
 
     private void registerSubCommand(SubCommand subCommand) {
@@ -473,6 +498,46 @@ public interface SubCommand {
     List<String> tabComplete(Player player, String[] args);
 }
 ```
+
+#### 4.3 子命令详细说明
+
+插件提供了丰富的子命令来管理公会的各项功能：
+
+##### 基础命令
+- **CreateCommand** - 创建新公会：`/guild create <名称> <标签>`
+- **InfoCommand** - 查看公会信息：`/guild info [公会名称]`
+- **HelpCommand** - 显示帮助信息：`/guild help`
+- **ListCommand** - 列出所有公会：`/guild list [页码]`
+
+##### 成员管理命令
+- **InviteCommand** - 邀请玩家加入公会：`/guild invite <玩家名>`
+- **InviteAcceptCommand** - 接受公会邀请：`/guild inviteaccept`
+- **InviteRejectCommand** - 拒绝公会邀请：`/guild invitereject`
+- **JoinCommand** - 申请加入公会：`/guild join <公会名称>`
+- **LeaveCommand** - 离开当前公会：`/guild leave`
+- **DisbandCommand** - 解散公会（仅会长）：`/guild disband`
+
+##### 公会管理命令
+- **ManagerCommand** - 打开公会管理GUI：`/guild manager`
+- **BankCommand** - 管理公会银行：`/guild bank [存入/取出] [金额]`
+- **LevelCommand** - 查看或升级公会等级：`/guild level [upgrade]`
+- **ChatCommand** - 切换公会聊天模式：`/guild chat`
+
+##### 领地命令
+- **ClaimCommand** - 声明当前区块为公会领地：`/guild claim`
+- **UnclaimCommand** - 取消当前区块的领地声明：`/guild unclaim`
+
+##### 公会关系命令
+- **AllyCommand** - 管理联盟关系：`/guild ally <add/remove> <公会名>`
+- **WarCommand** - 管理战争状态：`/guild war <declare/ceasefire> <公会名>`
+- **RelationCommand** - 打开公会关系管理GUI：`/guild relation`
+
+##### 活动与任务命令
+- **ActivityCommand** - 管理公会活动：`/guild activity`
+- **TaskCommand** - 查看和完成公会任务：`/guild task`
+
+##### 管理员命令
+- **AdminCommand** - 管理员专用命令（需要权限）：`/guild admin <子命令>`
 
 ### 5. GUI系统 (gui/)
 
@@ -647,6 +712,72 @@ public class GuildListHolder implements InventoryHolder {
 3. 在`GUIManager`中添加了`openGuildSettingsGUI`方法
 4. 添加了权限检查，确保只有公会会长可以修改关键设置
 
+### 6. 公会邀请系统
+
+#### 功能描述
+公会邀请系统允许公会管理层邀请玩家加入公会，提供了一个比申请系统更主动的成员招募方式：
+- 公会会长和管理员可以向在线玩家发送邀请
+- 被邀请的玩家会收到包含点击按钮的邀请消息
+- 玩家可以通过点击消息中的按钮快速接受或拒绝邀请
+- 邀请具有时效性，超时后自动失效（默认5分钟）
+- 玩家同时只能有一个待处理的邀请
+- 接受邀请后会自动加入公会
+
+#### 实现内容
+1. 邀请数据管理
+   - 使用`ConcurrentHashMap`在内存中存储邀请信息
+   - 实现了定时清理过期邀请的机制
+   - `InviteInfo`内部类存储邀请详细信息
+
+2. 命令实现
+   - `InviteCommand` - 发送邀请命令
+   - `InviteAcceptCommand` - 接受邀请命令
+   - `InviteRejectCommand` - 拒绝邀请命令
+
+3. 消息交互
+   - 使用Adventure API的`ClickEvent`实现可点击消息
+   - 邀请消息包含[接受]和[拒绝]按钮
+   - 点击按钮自动执行相应命令
+
+4. 权限控制
+   - 只有公会会长和管理员可以发送邀请
+   - 防止向已有公会的玩家发送邀请
+   - 防止重复发送邀请
+
+### 7. 公会管理员功能
+
+#### 功能描述
+公会管理员功能为服务器管理员提供了强大的公会管理工具，允许他们在必要时干预和管理所有公会：
+- 强制解散违规公会
+- 修改公会信息（名称、标签、等级等）
+- 管理公会成员（踢出、转让会长等）
+- 查看所有公会的详细信息
+- 清理无效或过期的公会数据
+- 重置公会银行或领地
+
+#### 实现内容
+1. AdminCommand命令实现
+   - 需要特定权限（sagaguild.admin）
+   - 支持多种管理子命令
+   - 提供详细的操作日志
+
+2. 支持的管理操作
+   - `/guild admin disband <公会名>` - 强制解散公会
+   - `/guild admin setowner <公会名> <玩家名>` - 转让会长
+   - `/guild admin setlevel <公会名> <等级>` - 设置公会等级
+   - `/guild admin info <公会名>` - 查看详细信息
+   - `/guild admin list` - 列出所有公会
+
+3. 安全措施
+   - 所有操作都需要管理员权限验证
+   - 重要操作会记录到日志
+   - 支持操作确认机制防止误操作
+
+4. 数据管理
+   - 可以直接操作数据库
+   - 支持批量操作
+   - 提供数据备份和恢复功能
+
 ## 兼容性工具类
 
 为了确保插件在不同服务端环境中的兼容性，我们开发了一系列工具类来处理API差异。
@@ -781,3 +912,8 @@ public class TeamUtil {
 - [Component](https://jd.advntr.dev/api/4.14.0/net/kyori/adventure/text/Component.html)
 - [TextComponent](https://jd.advntr.dev/api/4.14.0/net/kyori/adventure/text/TextComponent.html)
 - [Title](https://jd.papermc.io/paper/1.20.1/org/bukkit/entity/Player.html#sendTitle(net.kyori.adventure.title.Title))
+
+### 交互事件API
+- [ClickEvent](https://jd.advntr.dev/api/4.14.0/net/kyori/adventure/text/event/ClickEvent.html)
+- [HoverEvent](https://jd.advntr.dev/api/4.14.0/net/kyori/adventure/text/event/HoverEvent.html)
+- [ClickEvent.Action](https://jd.advntr.dev/api/4.14.0/net/kyori/adventure/text/event/ClickEvent.Action.html)
