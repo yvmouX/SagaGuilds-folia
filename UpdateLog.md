@@ -1,5 +1,38 @@
 # SagaGuild 更新日志
 
+## 2025年7月21日更新
+
+### 占位符更新
+
+**玩家公会信息占位符（支持离线玩家查询）：**
+- `%sg_currentguild_name%` - 玩家所在公会名称
+- `%sg_currentguild_tag%` - 玩家所在公会标签
+- `%sg_currentguild_description%` - 玩家所在公会描述
+- `%sg_currentguild_level%` - 玩家所在公会等级
+- `%sg_currentguild_role%` - 玩家在公会的职位
+- `%sg_currentguild_owner%` - 玩家所在公会会长名称
+- `%sg_currentguild_currentmembers%` - 玩家所在公会当前人数
+- `%sg_currentguild_maxmembers%` - 玩家所在公会最大人数
+- `%sg_currentguild_money%` - 玩家所在公会银行余额
+- `%sg_currentguild_warstats%` - 玩家所在公会战争状态
+- `%sg_currentguild_allystats%` - 玩家所在公会联盟关系
+
+**排行榜占位符（失败返回空字符串）：**
+- `%sg_top1_money_gname%` - 银行资金第1公会名
+- `%sg_top1_money_value%` - 银行资金第1公会资金值
+- `%sg_top3_members_gname%` - 人数第3公会名
+- `%sg_top3_members_value%` - 人数第3公会人数值
+- `%sg_top5_level_gname%` - 等级第5公会名称
+- `%sg_top5_level_value%` - 等级第5公会等级值
+
+
+ **兼容性说明**
+   - 支持离线玩家查询，无需玩家在线即可获取公会信息
+   - 在玩家未加入公会或查询失败时返回空字符串
+   - 与各版本PlaceholderAPI兼容，确保稳定运行
+
+**版本号：** 1.0.9.21
+
 ## 2025年5月22日更新
 
 ### 问题修复
