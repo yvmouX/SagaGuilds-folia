@@ -3,6 +3,8 @@
 ## 项目概述
 SagaGuild 是一个为 Paper 1.20.1 服务器开发的全功能公会插件，提供公会创建、成员管理、领地系统、公会等级、公会战等功能。插件具备完整的GUI管理界面，包括领地权限设置、聊天系统配置等高级功能，并完全集成经济系统，支持各项操作的费用管理。
 
+- **包名**: cn.i7mc
+- **作者**: Saga
 - **Java版本**: 17
 - **API**: Paper 1.20.1 (https://jd.papermc.io/paper/1.20.1)
 - **数据存储**: SQLite (使用Paper内置驱动)
@@ -22,123 +24,125 @@ src/
 │   │               │   ├── GuildCommand.java              # 主命令处理
 │   │               │   ├── SubCommand.java                # 子命令接口
 │   │               │   └── subcommands/                   # 子命令
-│   │               │       ├── CreateCommand.java         # 创建公会命令
-│   │               │       ├── InfoCommand.java           # 公会信息命令
-│   │               │       ├── HelpCommand.java           # 帮助命令
-│   │               │       ├── ClaimCommand.java          # 领地声明命令
-│   │               │       ├── UnclaimCommand.java        # 取消领地声明命令
-│   │               │       ├── BankCommand.java           # 银行命令
-│   │               │       ├── ChatCommand.java           # 聊天命令
-│   │               │       ├── LevelCommand.java          # 等级命令
-│   │               │       ├── TaskCommand.java           # 任务命令
-│   │               │       ├── WarCommand.java            # 公会战命令
-│   │               │       ├── AllyCommand.java           # 联盟命令
-│   │               │       ├── ListCommand.java           # 公会列表命令
-│   │               │       ├── JoinCommand.java           # 加入公会命令
-│   │               │       ├── ManagerCommand.java        # 公会管理命令
-│   │               │       ├── RelationCommand.java       # 公会关系命令
 │   │               │       ├── ActivityCommand.java       # 活动命令
 │   │               │       ├── AdminCommand.java          # 管理员命令
-│   │               │       ├── DisbandCommand.java        # 解散公会命令
-│   │               │       ├── InviteCommand.java         # 邀请玩家命令
-│   │               │       ├── InviteAcceptCommand.java   # 接受邀请命令
-│   │               │       ├── InviteRejectCommand.java   # 拒绝邀请命令
-│   │               │       ├── LeaveCommand.java          # 离开公会命令
-│   │               │       ├── SetRoleCommand.java        # 设置成员职位命令
-│   │               │       ├── TagColorCommand.java       # 设置公会标签颜色命令
-│   │               │       ├── SetWarpCommand.java        # 设置公会传送点命令
-│   │               │       ├── WarpCommand.java           # 传送到公会传送点命令
+│   │               │       ├── AllyCommand.java           # 联盟命令
+│   │               │       ├── BankCommand.java           # 银行命令
+│   │               │       ├── ChatCommand.java           # 聊天命令
+│   │               │       ├── ClaimCommand.java          # 领地声明命令
+│   │               │       ├── CreateCommand.java         # 创建公会命令
 │   │               │       ├── DelWarpCommand.java        # 删除公会传送点命令
+│   │               │       ├── DisbandCommand.java        # 解散公会命令
+│   │               │       ├── HelpCommand.java           # 帮助命令
+│   │               │       ├── InfoCommand.java           # 公会信息命令
+│   │               │       ├── InviteAcceptCommand.java   # 接受邀请命令
+│   │               │       ├── InviteCommand.java         # 邀请玩家命令
+│   │               │       ├── InviteRejectCommand.java   # 拒绝邀请命令
+│   │               │       ├── JoinCommand.java           # 加入公会命令
+│   │               │       ├── LeaveCommand.java          # 离开公会命令
+│   │               │       ├── LevelCommand.java          # 等级命令
+│   │               │       ├── ListCommand.java           # 公会列表命令
+│   │               │       ├── ManagerCommand.java        # 公会管理命令
+│   │               │       ├── RelationCommand.java       # 公会关系命令
+│   │               │       ├── SetRoleCommand.java        # 设置成员职位命令
+│   │               │       ├── SetWarpCommand.java        # 设置公会传送点命令
+│   │               │       ├── TagColorCommand.java       # 设置公会标签颜色命令
+│   │               │       ├── TaskCommand.java           # 任务命令
+│   │               │       ├── UnclaimCommand.java        # 取消领地声明命令
+│   │               │       ├── WarCommand.java            # 公会战命令
+│   │               │       ├── WarpCommand.java           # 传送到公会传送点命令
 │   │               │       └── activity/                  # 活动子命令
+│   │               │           ├── ActivityCancelCommand.java  # 取消活动命令
 │   │               │           ├── ActivityCreateCommand.java  # 创建活动命令
 │   │               │           ├── ActivityInfoCommand.java    # 活动信息命令
-│   │               │           ├── ActivityListCommand.java    # 活动列表命令
 │   │               │           ├── ActivityJoinCommand.java    # 加入活动命令
 │   │               │           ├── ActivityLeaveCommand.java   # 离开活动命令
-│   │               │           └── ActivityCancelCommand.java  # 取消活动命令
+│   │               │           └── ActivityListCommand.java    # 活动列表命令
 │   │               ├── config/                            # 配置系统
 │   │               │   └── ConfigManager.java             # 配置管理器
 │   │               ├── data/                              # 数据管理
 │   │               │   ├── DatabaseManager.java           # 数据库管理器
 │   │               │   ├── dao/                           # 数据访问对象
-│   │               │   │   ├── GuildDAO.java              # 公会数据访问
-│   │               │   │   ├── MemberDAO.java             # 成员数据访问
-│   │               │   │   ├── LandDAO.java               # 领地数据访问
-│   │               │   │   ├── BankDAO.java               # 银行数据访问
-│   │               │   │   ├── WarDAO.java                # 公会战数据访问
-│   │               │   │   ├── TaskDAO.java               # 任务数据访问
 │   │               │   │   ├── ActivityDAO.java           # 活动数据访问
 │   │               │   │   ├── AllianceDAO.java           # 联盟数据访问
+│   │               │   │   ├── BankDAO.java               # 银行数据访问
+│   │               │   │   ├── GuildDAO.java              # 公会数据访问
 │   │               │   │   ├── JoinRequestDAO.java        # 加入请求数据访问
+│   │               │   │   ├── LandDAO.java               # 领地数据访问
+│   │               │   │   ├── MemberDAO.java             # 成员数据访问
 │   │               │   │   ├── ParticipantDAO.java        # 参与者数据访问
+│   │               │   │   ├── TaskDAO.java               # 任务数据访问
+│   │               │   │   ├── WarDAO.java                # 公会战数据访问
 │   │               │   │   └── WarpDAO.java               # 公会传送点数据访问
 │   │               │   └── models/                        # 数据模型
-│   │               │       ├── Guild.java                 # 公会模型
-│   │               │       ├── GuildMember.java           # 公会成员模型
-│   │               │       ├── GuildLand.java             # 公会领地模型
-│   │               │       ├── GuildWar.java              # 公会战模型
-│   │               │       ├── GuildTask.java             # 公会任务模型
-│   │               │       ├── GuildActivity.java         # 公会活动模型
+│   │               │       ├── ActivityParticipant.java   # 活动参与者模型
 │   │               │       ├── Alliance.java              # 联盟模型
 │   │               │       ├── AllianceRequest.java       # 联盟请求模型
 │   │               │       ├── CeasefireRequest.java      # 停战请求模型
-│   │               │       ├── JoinRequest.java           # 加入请求模型
-│   │               │       ├── ActivityParticipant.java   # 活动参与者模型
-│   │               │       └── GuildWarp.java             # 公会传送点模型
+│   │               │       ├── Guild.java                 # 公会模型
+│   │               │       ├── GuildActivity.java         # 公会活动模型
+│   │               │       ├── GuildLand.java             # 公会领地模型
+│   │               │       ├── GuildMember.java           # 公会成员模型
+│   │               │       ├── GuildTask.java             # 公会任务模型
+│   │               │       ├── GuildWar.java              # 公会战模型
+│   │               │       ├── GuildWarp.java             # 公会传送点模型
+│   │               │       └── JoinRequest.java           # 加入请求模型
 │   │               ├── gui/                               # GUI系统
 │   │               │   ├── GUIManager.java                # GUI管理器
 │   │               │   ├── holders/                       # 物品栏持有者
+│   │               │   │   ├── GuildChatSettingsHolder.java # 公会聊天设置持有者
+│   │               │   │   ├── GuildLandSettingsHolder.java # 公会领地设置持有者
 │   │               │   │   ├── GuildListHolder.java       # 公会列表持有者
 │   │               │   │   ├── GuildManageHolder.java     # 公会管理持有者
-│   │               │   │   ├── GuildMemberHolder.java     # 公会成员管理持有者
 │   │               │   │   ├── GuildMemberActionHolder.java # 公会成员操作持有者
+│   │               │   │   ├── GuildMemberHolder.java     # 公会成员管理持有者
 │   │               │   │   ├── GuildRelationHolder.java   # 公会关系持有者
 │   │               │   │   ├── GuildRelationManageHolder.java # 公会关系管理持有者
-│   │               │   │   ├── JoinRequestHolder.java     # 加入请求持有者
 │   │               │   │   ├── GuildSettingsHolder.java   # 公会设置持有者
-│   │               │   │   ├── GuildLandSettingsHolder.java # 公会领地设置持有者
-│   │               │   │   └── GuildChatSettingsHolder.java # 公会聊天设置持有者
+│   │               │   │   └── JoinRequestHolder.java     # 加入请求持有者
 │   │               │   └── listeners/                     # GUI监听器
+│   │               │       ├── GuildChatSettingsListener.java # 公会聊天设置监听器
+│   │               │       ├── GuildLandSettingsListener.java # 公会领地设置监听器
 │   │               │       ├── GuildListListener.java     # 公会列表监听器
 │   │               │       ├── GuildManageListener.java   # 公会管理监听器
-│   │               │       ├── GuildMemberListener.java   # 公会成员管理监听器
 │   │               │       ├── GuildMemberActionListener.java # 公会成员操作监听器
+│   │               │       ├── GuildMemberListener.java   # 公会成员管理监听器
 │   │               │       ├── GuildRelationListener.java # 公会关系监听器
 │   │               │       ├── GuildRelationManageListener.java # 公会关系管理监听器
-│   │               │       ├── JoinRequestListener.java    # 加入请求监听器
 │   │               │       ├── GuildSettingsListener.java # 公会设置监听器
-│   │               │       ├── GuildLandSettingsListener.java # 公会领地设置监听器
-│   │               │       └── GuildChatSettingsListener.java # 公会聊天设置监听器
+│   │               │       └── JoinRequestListener.java   # 加入请求监听器
 │   │               ├── listeners/                         # 事件监听器
-│   │               │   ├── PlayerListener.java            # 玩家事件监听器
-│   │               │   ├── LandListener.java              # 领地事件监听器
-│   │               │   ├── ExperienceListener.java        # 经验事件监听器
+│   │               │   ├── ActivityListener.java          # 活动事件监听器
 │   │               │   ├── ChatListener.java              # 聊天事件监听器
-│   │               │   ├── WarListener.java               # 公会战事件监听器
+│   │               │   ├── ExperienceListener.java        # 经验事件监听器
+│   │               │   ├── LandListener.java              # 领地事件监听器
+│   │               │   ├── PlayerInputListener.java       # 玩家输入监听器
+│   │               │   ├── PlayerListener.java            # 玩家事件监听器
 │   │               │   ├── TaskListener.java              # 任务事件监听器
-│   │               │   └── ActivityListener.java          # 活动事件监听器
+│   │               │   └── WarListener.java               # 公会战事件监听器
 │   │               ├── managers/                          # 功能管理器
-│   │               │   ├── GuildManager.java              # 公会管理器
-│   │               │   ├── MemberManager.java             # 成员管理器
-│   │               │   ├── LandManager.java               # 领地管理器
-│   │               │   ├── WarManager.java                # 公会战管理器
-│   │               │   ├── BankManager.java               # 银行管理器
-│   │               │   ├── TaskManager.java               # 任务管理器
-│   │               │   ├── ChatManager.java               # 聊天管理器
 │   │               │   ├── ActivityManager.java           # 活动管理器
 │   │               │   ├── AllianceManager.java           # 联盟管理器
+│   │               │   ├── BankManager.java               # 银行管理器
+│   │               │   ├── ChatManager.java               # 聊天管理器
 │   │               │   ├── EconomyManager.java            # 经济系统管理器
-│   │               │   ├── WarpManager.java               # 公会传送点管理器
-│   │               │   └── RankingManager.java            # 排行榜管理器
+│   │               │   ├── GuildManager.java              # 公会管理器
+│   │               │   ├── LandManager.java               # 领地管理器
+│   │               │   ├── MemberManager.java             # 成员管理器
+│   │               │   ├── RankingManager.java            # 排行榜管理器
+│   │               │   ├── TaskManager.java               # 任务管理器
+│   │               │   ├── WarManager.java                # 公会战管理器
+│   │               │   └── WarpManager.java               # 公会传送点管理器
 │   │               ├── placeholders/                      # PlaceholderAPI扩展
 │   │               │   └── SagaGuildPlaceholders.java     # 占位符扩展类
 │   │               └── utils/                             # 工具类
+│   │                   ├── GUIUtils.java                  # GUI工具类
+│   │                   ├── InventoryUtil.java             # 物品栏工具类
 │   │                   ├── ItemBuilder.java               # 物品构建器
 │   │                   ├── ItemUtil.java                  # 物品工具类（兼容性处理）
+│   │                   ├── MessageUtil.java               # 消息工具类
 │   │                   ├── PlayerUtil.java                # 玩家工具类（兼容性处理）
-│   │                   ├── TeamUtil.java                  # 团队工具类（兼容性处理）
-│   │                   ├── InventoryUtil.java             # 物品栏工具类
-│   │                   └── MessageUtil.java               # 消息工具
+│   │                   └── TeamUtil.java                  # 团队工具类（兼容性处理）
 │   └── resources/                                         # 资源文件
 │       ├── config.yml                                     # 配置文件
 │       ├── messages.yml                                   # 消息文件
@@ -1222,7 +1226,32 @@ PlaceholderAPI 占位符系统为 SagaGuild 提供了与其他插件的集成能
    - 权限验证确保只有授权成员可操作
    - 传送冷却防止滥用
 
-## 最新功能更新 (v1.0.9.37)
+## 最新功能更新 (v1.0.9.45)
+
+### v1.0.9.45 版本稳定性增强
+
+#### 版本更新
+- **当前版本**: v1.0.9.45
+- **构建系统**: Gradle 自动版本管理
+- **依赖更新**: Adventure API 4.23.0
+- **兼容性**: Paper 1.20.1-R0.1-SNAPSHOT
+
+#### 技术改进
+
+1. **构建系统优化**
+   - 实现了自动版本增量系统
+   - 构建过程自动更新版本号
+   - 优化了Shadow JAR打包配置
+
+2. **依赖管理增强**
+   - 更新Adventure API到4.23.0版本
+   - 改进了PlaceholderAPI集成方式
+   - 优化了Vault依赖处理
+
+3. **代码结构优化**
+   - 完善了单例模式实现
+   - 改进了管理器初始化顺序
+   - 优化了监听器注册机制
 
 ### v1.0.9.37 重要Bug修复版本
 
@@ -1306,3 +1335,10 @@ PlaceholderAPI 占位符系统为 SagaGuild 提供了与其他插件的集成能
 - ✅ 完善的权限验证和操作反馈
 - ✅ 用户友好的错误提示和操作指导
 
+### 构建信息
+- **版本**: v1.0.9.45
+- **构建状态**: ✅ 成功
+- **Java兼容性**: Java 17+ 
+- **Paper版本**: 1.20.1
+- **最新更新**: 版本稳定性增强
+- **技术改进**: 构建系统、依赖管理、代码结构优化
