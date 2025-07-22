@@ -1,10 +1,8 @@
 # SagaGuild 插件开发文档
 
 ## 项目概述
-SagaGuild 是一个为 Paper 1.20.1 服务器开发的全功能公会插件，提供公会创建、成员管理、领地系统、公会等级、公会战等功能。
+SagaGuild 是一个为 Paper 1.20.1 服务器开发的全功能公会插件，提供公会创建、成员管理、领地系统、公会等级、公会战等功能。插件具备完整的GUI管理界面，包括领地权限设置、聊天系统配置等高级功能，并完全集成经济系统，支持各项操作的费用管理。
 
-- **包名**: cn.i7mc
-- **作者**: Saga
 - **Java版本**: 17
 - **API**: Paper 1.20.1 (https://jd.papermc.io/paper/1.20.1)
 - **数据存储**: SQLite (使用Paper内置驱动)
@@ -46,6 +44,11 @@ src/
 │   │               │       ├── InviteAcceptCommand.java   # 接受邀请命令
 │   │               │       ├── InviteRejectCommand.java   # 拒绝邀请命令
 │   │               │       ├── LeaveCommand.java          # 离开公会命令
+│   │               │       ├── SetRoleCommand.java        # 设置成员职位命令
+│   │               │       ├── TagColorCommand.java       # 设置公会标签颜色命令
+│   │               │       ├── SetWarpCommand.java        # 设置公会传送点命令
+│   │               │       ├── WarpCommand.java           # 传送到公会传送点命令
+│   │               │       ├── DelWarpCommand.java        # 删除公会传送点命令
 │   │               │       └── activity/                  # 活动子命令
 │   │               │           ├── ActivityCreateCommand.java  # 创建活动命令
 │   │               │           ├── ActivityInfoCommand.java    # 活动信息命令
@@ -67,7 +70,8 @@ src/
 │   │               │   │   ├── ActivityDAO.java           # 活动数据访问
 │   │               │   │   ├── AllianceDAO.java           # 联盟数据访问
 │   │               │   │   ├── JoinRequestDAO.java        # 加入请求数据访问
-│   │               │   │   └── ParticipantDAO.java        # 参与者数据访问
+│   │               │   │   ├── ParticipantDAO.java        # 参与者数据访问
+│   │               │   │   └── WarpDAO.java               # 公会传送点数据访问
 │   │               │   └── models/                        # 数据模型
 │   │               │       ├── Guild.java                 # 公会模型
 │   │               │       ├── GuildMember.java           # 公会成员模型
@@ -79,7 +83,8 @@ src/
 │   │               │       ├── AllianceRequest.java       # 联盟请求模型
 │   │               │       ├── CeasefireRequest.java      # 停战请求模型
 │   │               │       ├── JoinRequest.java           # 加入请求模型
-│   │               │       └── ActivityParticipant.java   # 活动参与者模型
+│   │               │       ├── ActivityParticipant.java   # 活动参与者模型
+│   │               │       └── GuildWarp.java             # 公会传送点模型
 │   │               ├── gui/                               # GUI系统
 │   │               │   ├── GUIManager.java                # GUI管理器
 │   │               │   ├── holders/                       # 物品栏持有者
@@ -90,7 +95,9 @@ src/
 │   │               │   │   ├── GuildRelationHolder.java   # 公会关系持有者
 │   │               │   │   ├── GuildRelationManageHolder.java # 公会关系管理持有者
 │   │               │   │   ├── JoinRequestHolder.java     # 加入请求持有者
-│   │               │   │   └── GuildSettingsHolder.java   # 公会设置持有者
+│   │               │   │   ├── GuildSettingsHolder.java   # 公会设置持有者
+│   │               │   │   ├── GuildLandSettingsHolder.java # 公会领地设置持有者
+│   │               │   │   └── GuildChatSettingsHolder.java # 公会聊天设置持有者
 │   │               │   └── listeners/                     # GUI监听器
 │   │               │       ├── GuildListListener.java     # 公会列表监听器
 │   │               │       ├── GuildManageListener.java   # 公会管理监听器
@@ -99,7 +106,9 @@ src/
 │   │               │       ├── GuildRelationListener.java # 公会关系监听器
 │   │               │       ├── GuildRelationManageListener.java # 公会关系管理监听器
 │   │               │       ├── JoinRequestListener.java    # 加入请求监听器
-│   │               │       └── GuildSettingsListener.java # 公会设置监听器
+│   │               │       ├── GuildSettingsListener.java # 公会设置监听器
+│   │               │       ├── GuildLandSettingsListener.java # 公会领地设置监听器
+│   │               │       └── GuildChatSettingsListener.java # 公会聊天设置监听器
 │   │               ├── listeners/                         # 事件监听器
 │   │               │   ├── PlayerListener.java            # 玩家事件监听器
 │   │               │   ├── LandListener.java              # 领地事件监听器
@@ -118,6 +127,8 @@ src/
 │   │               │   ├── ChatManager.java               # 聊天管理器
 │   │               │   ├── ActivityManager.java           # 活动管理器
 │   │               │   ├── AllianceManager.java           # 联盟管理器
+│   │               │   ├── EconomyManager.java            # 经济系统管理器
+│   │               │   ├── WarpManager.java               # 公会传送点管理器
 │   │               │   └── RankingManager.java            # 排行榜管理器
 │   │               ├── placeholders/                      # PlaceholderAPI扩展
 │   │               │   └── SagaGuildPlaceholders.java     # 占位符扩展类
@@ -534,6 +545,15 @@ public interface SubCommand {
 - **AllyCommand** - 管理联盟关系：`/guild ally <add/remove> <公会名>`
 - **WarCommand** - 管理战争状态：`/guild war <declare/ceasefire> <公会名>`
 - **RelationCommand** - 打开公会关系管理GUI：`/guild relation`
+
+##### 传送点命令
+- **SetWarpCommand** - 设置公会传送点：`/guild setwarp`
+- **WarpCommand** - 传送到公会传送点：`/guild warp`
+- **DelWarpCommand** - 删除公会传送点：`/guild delwarp`
+
+##### 成员管理命令
+- **SetRoleCommand** - 设置成员职位：`/guild setrole <玩家名> <职位>`
+- **TagColorCommand** - 设置公会标签颜色：`/guild tagcolor <颜色>`
 
 ##### 活动与任务命令
 - **ActivityCommand** - 管理公会活动：`/guild activity`
@@ -991,3 +1011,298 @@ PlaceholderAPI 占位符系统为 SagaGuild 提供了与其他插件的集成能
    - 修复了与现有管理器的集成问题
    - 确保在 PlaceholderAPI 不存在时插件仍能正常运行
    - 支持离线玩家数据查询
+
+#### PlaceholderAPI 扩展修复（v1.0.9.21）
+
+经过测试发现占位符功能未能正常工作，显示原始占位符文本而非实际数值。通过深入分析 PlaceholderAPI 官方文档和成功案例，识别并修复了以下关键问题：
+
+##### 修复内容：
+1. **扩展标识符规范化**：
+   - 从过长的 `sagaguild` 改为简洁的 `sg`
+   - 符合 PlaceholderAPI 官方最佳实践
+
+2. **占位符格式标准化**：
+   - 统一使用标准格式：`%sg_currentguild_name%`
+   - 移除非标准的冒号分隔格式
+
+3. **解析逻辑重构**：
+   - 移除错误的前缀分离处理
+   - 按照官方规范直接处理完整占位符名称
+   - 优化排行榜占位符格式为 `%sg_top1_money_gname%`
+
+4. **技术改进**：
+   - 使用推荐的 `onRequest(OfflinePlayer, String)` 方法
+   - 简化占位符解析逻辑，提高性能
+   - 增强兼容性，支持不同版本的 PlaceholderAPI
+
+修复后的占位符现在能够正确显示实际数值，完全符合 PlaceholderAPI 标准实现规范。
+
+### 9. 领地设置GUI系统
+
+#### 功能描述
+领地设置GUI系统为公会管理员提供了直观的领地权限管理界面，允许长老及以上权限的成员配置公会领地的各项设置。该系统提供以下功能：
+- 领地保护开关 - 控制是否保护领地免受破坏
+- PVP设置开关 - 控制领地内是否允许PVP战斗
+- 访客权限开关 - 控制非公会成员是否可进入领地
+- 建筑权限开关 - 控制建筑权限的范围设置
+- 一键重置功能 - 快速恢复所有设置为默认值
+
+#### 实现内容
+1. **GUI持有者** (`GuildLandSettingsHolder.java`)
+   - 实现InventoryHolder接口，用于标识领地设置GUI
+   - 存储关联的公会对象信息
+   - 提供GUI识别和数据传递功能
+
+2. **GUI监听器** (`GuildLandSettingsListener.java`)
+   - 处理领地设置GUI中的所有点击事件
+   - 实现设置开关的切换逻辑
+   - 权限验证确保只有长老及以上可操作
+   - 配置数据的保存和读取
+
+3. **GUI界面设计**
+   - 54格子的专业GUI界面
+   - 直观的物品图标表示各项设置
+   - 实时显示当前设置状态（启用/禁用）
+   - 返回按钮提供便捷的导航体验
+
+4. **权限控制**
+   - 长老及以上权限方可访问
+   - 每次操作都进行权限验证
+   - 未授权访问时自动关闭界面并提示
+
+#### 访问路径
+公会设置GUI → 领地设置按钮 → 领地设置GUI
+
+### 10. 聊天设置GUI系统
+
+#### 功能描述
+聊天设置GUI系统为公会提供了完整的聊天功能配置界面，支持公会管理员自定义各种聊天相关设置。该系统提供以下功能：
+- 公会聊天开关 - 启用/禁用公会内部聊天功能
+- 联盟聊天开关 - 启用/禁用与联盟公会的聊天功能
+- 聊天过滤开关 - 启用/禁用不当内容过滤功能
+- 自动公会聊天 - 新成员加入时自动进入公会聊天模式
+- 聊天格式自定义 - 可完全自定义聊天消息的显示格式
+- 聊天前缀自定义 - 可设置专属的公会聊天前缀
+- 一键重置功能 - 快速恢复所有聊天设置为默认值
+
+#### 实现内容
+1. **GUI持有者** (`GuildChatSettingsHolder.java`)
+   - 实现InventoryHolder接口，用于标识聊天设置GUI
+   - 存储关联的公会对象信息
+   - 提供GUI识别和数据传递功能
+
+2. **GUI监听器** (`GuildChatSettingsListener.java`)
+   - 处理聊天设置GUI中的所有交互事件
+   - 实现各种聊天开关的切换逻辑
+   - 集成PlayerInputListener处理文本输入
+   - 配置数据的实时保存和刷新
+
+3. **文本输入集成**
+   - 与PlayerInputListener集成处理格式和前缀输入
+   - 支持输入验证和长度限制
+   - 输入取消机制和超时处理
+   - 输入完成后自动返回设置界面
+
+4. **配置管理**
+   - 所有设置存储在config.yml中
+   - 支持每个公会独立的配置项
+   - 实时配置保存，立即生效
+   - 重置功能清除所有自定义配置
+
+#### 访问路径
+公会设置GUI → 聊天设置按钮 → 聊天设置GUI
+
+### 11. 经济系统集成增强
+
+#### 领地声明费用系统
+经济系统现已完全集成到领地声明功能中，提供以下增强：
+- **费用检查** - 声明前自动检查玩家余额是否充足
+- **费用扣除** - 根据config.yml中的`land.claim-cost`配置自动扣除费用
+- **失败退还** - 当声明失败时自动退还已扣除的费用
+- **优雅降级** - 当经济系统未启用时提供友好的错误提示
+
+#### 公会创建费用系统
+公会创建功能也已集成完整的费用检查机制：
+- **创建费用** - 根据config.yml中的`guild.creation-cost`配置收取费用
+- **余额验证** - 创建前检查玩家是否有足够资金
+- **失败处理** - 创建失败时自动退还扣除的费用
+- **错误处理** - 完善的费用验证和用户友好的错误提示
+
+### 12. 联盟聊天功能完善
+
+#### 功能增强
+联盟聊天系统已得到全面完善，现在提供以下增强功能：
+- **多联盟支持** - 消息会自动发送给所有联盟公会的成员
+- **在线状态检查** - 只向在线成员发送消息，提高性能
+- **联盟关系获取** - 自动获取当前公会的所有联盟关系
+- **消息广播** - 确保所有相关成员都能收到联盟聊天消息
+
+#### 实现细节
+- 在ChatManager的`sendAllianceMessage`方法中实现
+- 使用AllianceManager获取联盟公会列表
+- 遍历所有联盟公会的在线成员发送消息
+- 保持与公会内部聊天一致的消息格式
+
+### 13. 经济系统管理器 (EconomyManager)
+
+#### 功能描述
+经济系统管理器提供与Vault经济系统的集成，为公会功能提供经济支持：
+- 与主流经济插件兼容（如EssentialsX Economy、CMI等）
+- 公会银行存取操作的经济后端支持
+- 公会创建、升级等功能的费用扣除
+- 公会活动和任务的奖励发放
+- 优雅的经济插件检测和错误处理
+
+#### 核心功能
+- **经济系统检测** - 自动检测服务器上的经济插件
+- **余额查询** - 获取玩家经济余额
+- **资金转移** - 处理玩家与公会银行间的资金流转
+- **费用扣除** - 处理各种公会功能的费用扣除
+- **奖励发放** - 自动发放任务和活动奖励
+
+#### 实现内容
+1. **Vault集成**
+   - 检测Vault插件是否存在
+   - 自动连接到可用的经济服务提供者
+   - 支持多种经济插件的统一API
+
+2. **核心方法实现**
+   ```java
+   public boolean hasEnough(OfflinePlayer player, double amount)
+   public boolean withdraw(OfflinePlayer player, double amount)  
+   public boolean deposit(OfflinePlayer player, double amount)
+   public double getBalance(OfflinePlayer player)
+   ```
+
+3. **错误处理**
+   - 当Vault或经济插件缺失时优雅降级
+   - 详细的错误日志记录
+   - 操作失败时的用户友好提示
+
+### 10. 公会传送点系统
+
+#### 功能描述
+公会传送点系统允许公会设置专属传送点，方便成员快速聚集：
+- 公会可以设置一个传送点位置
+- 成员可以快速传送到公会传送点
+- 支持权限控制，防止滥用传送功能
+- 传送点信息持久化存储
+- 传送冷却时间和安全检查
+
+#### 核心功能
+- **传送点设置** - 副会长及以上权限可设置传送点
+- **传送点传送** - 公会成员可传送到设置的传送点  
+- **传送点删除** - 管理员可删除现有传送点
+- **安全检查** - 传送前检查目标位置安全性
+- **冷却控制** - 防止频繁传送的冷却机制
+
+#### 实现内容
+1. **数据模型** (`GuildWarp.java`)
+   - 存储传送点的完整坐标信息（世界、坐标、朝向）
+   - 记录创建时间和创建者信息
+   - 与公会ID关联
+
+2. **数据访问** (`WarpDAO.java`) 
+   - 传送点数据的增删改查操作
+   - 数据库表结构管理
+   - 数据持久化保证
+
+3. **业务逻辑** (`WarpManager.java`)
+   - 传送点创建和验证逻辑
+   - 传送安全性检查
+   - 冷却时间管理
+
+4. **命令实现**
+   - `SetWarpCommand` - 设置传送点：`/guild setwarp`
+   - `WarpCommand` - 传送到传送点：`/guild warp`  
+   - `DelWarpCommand` - 删除传送点：`/guild delwarp`
+
+5. **安全特性**
+   - 传送前检查目标位置是否安全（非虚空、非岩浆等）
+   - 权限验证确保只有授权成员可操作
+   - 传送冷却防止滥用
+
+## 最新功能更新 (v1.0.9.37)
+
+### v1.0.9.37 重要Bug修复版本
+
+#### 修复内容
+
+1. **聊天系统修复**
+   - ✅ 修复了公会聊天频道显示MemorySection而非实际消息内容的问题
+   - ✅ 修复了聊天监听器在文本输入后不自动结束监听的问题
+   - ✅ 修复了会长转让确认后聊天监听器状态未清除的问题
+
+2. **GUI系统修复**
+   - ✅ 修复了异步线程中打开GUI导致的IllegalStateException错误
+   - ✅ 修复了成员管理GUI返回按钮无效的问题
+   - ✅ 修复了GUI切换时鼠标自动移动到屏幕中央的问题
+
+3. **命令系统修复**
+   - ✅ 修复了/g ally命令参数索引错误导致的功能异常
+   - ✅ 改进了命令参数处理逻辑，确保索引正确
+
+4. **占位符系统修复**
+   - ✅ 修复了公会战胜利次数占位符不更新的问题
+   - ✅ 战争结束后排行榜数据会立即刷新
+
+#### 技术改进
+
+1. **线程安全增强**
+   - 所有GUI操作现在都在主线程中执行
+   - 使用Bukkit.getScheduler().runTask()确保线程安全
+
+2. **状态管理优化**
+   - 使用try-finally机制确保聊天监听器状态正确清除
+   - 避免监听器状态残留导致的功能异常
+
+3. **用户体验提升**
+   - GUI刷新时不再关闭再打开，避免鼠标位置重置
+   - 成员管理界面增加返回按钮，改善导航体验
+
+## 历史功能更新 (v1.0.9.36)
+
+### 新增功能
+
+#### 1. 领地设置GUI系统
+- ✅ 完整的领地权限管理界面
+- ✅ 领地保护、PVP设置、访客权限、建筑权限开关
+- ✅ 一键重置功能
+- ✅ 长老及以上权限访问控制
+- ✅ 实时配置保存和状态显示
+
+#### 2. 聊天设置GUI系统  
+- ✅ 完整的聊天功能配置界面
+- ✅ 公会聊天、联盟聊天、聊天过滤等开关设置
+- ✅ 自定义聊天格式和前缀功能
+- ✅ 与PlayerInputListener集成的文本输入系统
+- ✅ 配置重置和实时保存功能
+
+#### 3. 经济系统集成增强
+- ✅ 领地声明费用检查和自动扣除系统
+- ✅ 公会创建费用验证和处理机制
+- ✅ 操作失败时的自动费用退还功能
+- ✅ 经济系统未启用时的优雅降级处理
+
+#### 4. 联盟聊天功能完善
+- ✅ 消息自动发送给所有联盟公会成员
+- ✅ 多联盟支持和在线状态检查
+- ✅ 完善的联盟关系获取和消息广播
+
+### 技术改进
+
+#### 代码结构优化
+- ✅ 新增4个GUI相关类文件（2个Holder + 2个Listener）
+- ✅ 完善的模块化设计和权限控制
+- ✅ 统一的消息管理和错误处理
+
+#### 配置系统增强
+- ✅ messages.yml新增15+个配置项
+- ✅ 支持每个公会独立的设置配置
+- ✅ 实时配置保存和加载机制
+
+#### 用户体验提升
+- ✅ 直观的GUI界面设计和状态显示
+- ✅ 完善的权限验证和操作反馈
+- ✅ 用户友好的错误提示和操作指导
+
