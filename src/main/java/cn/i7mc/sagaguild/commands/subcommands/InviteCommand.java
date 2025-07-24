@@ -4,6 +4,7 @@ import cn.i7mc.sagaguild.SagaGuild;
 import cn.i7mc.sagaguild.commands.SubCommand;
 import cn.i7mc.sagaguild.data.models.Guild;
 import cn.i7mc.sagaguild.data.models.GuildMember;
+import cn.yvmou.ylib.api.scheduler.UniversalTask;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -32,7 +33,7 @@ public class InviteCommand implements SubCommand {
     private static final long INVITE_EXPIRATION_TIME = 60 * 1000; // 1分钟
 
     // 定时任务ID
-    private static int taskId = -1;
+    private static UniversalTask universalTask;
 
     /**
      * 邀请信息类
@@ -77,18 +78,17 @@ public class InviteCommand implements SubCommand {
      */
     private void startExpirationChecker() {
         // 每30秒检查一次过期邀请
-        taskId = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            checkExpiredInvitations();
-        }, 20 * 30, 20 * 30).getTaskId(); // 30秒一次
+        universalTask = SagaGuild.getYLib().getScheduler().runTimerAsync(InviteCommand::checkExpiredInvitations,
+                20 * 30, 20 * 30); // 30秒一次
     }
 
     /**
      * 停止邀请过期检查任务
      */
     public static void stopExpirationChecker() {
-        if (taskId != -1) {
-            Bukkit.getScheduler().cancelTask(taskId);
-            taskId = -1;
+        if (universalTask != null && universalTask.isCurrentlyRunning()) {
+            universalTask.cancel();
+            universalTask = null;
         }
     }
 

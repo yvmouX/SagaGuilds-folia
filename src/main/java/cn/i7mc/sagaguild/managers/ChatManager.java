@@ -3,14 +3,10 @@ package cn.i7mc.sagaguild.managers;
 import cn.i7mc.sagaguild.SagaGuild;
 import cn.i7mc.sagaguild.data.models.Guild;
 import cn.i7mc.sagaguild.data.models.GuildMember;
-import cn.i7mc.sagaguild.utils.TeamUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +22,8 @@ public class ChatManager {
     // 玩家聊天模式
     private final Map<UUID, ChatMode> playerChatModes;
 
-    // 记分板
-    private Scoreboard scoreboard;
+//    // 记分板
+//    private Scoreboard scoreboard;
 
     /**
      * 聊天模式枚举
@@ -42,89 +38,89 @@ public class ChatManager {
         this.plugin = plugin;
         this.playerChatModes = new HashMap<>();
 
-        // 初始化记分板
-        initScoreboard();
+//        // 初始化记分板
+//        initScoreboard();
     }
 
-    /**
-     * 初始化记分板
-     */
-    private void initScoreboard() {
-        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+//    /**
+//     * 初始化记分板
+//     */
+//    private void initScoreboard() {
+//        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+//
+//        // 加载所有公会
+//        for (Guild guild : plugin.getGuildManager().getAllGuilds()) {
+//            createTeam(guild);
+//        }
+//    }
 
-        // 加载所有公会
-        for (Guild guild : plugin.getGuildManager().getAllGuilds()) {
-            createTeam(guild);
-        }
-    }
+//    /**
+//     * 创建公会队伍
+//     * @param guild 公会对象
+//     */
+//    public void createTeam(Guild guild) {
+//        String teamName = "guild_" + guild.getId();
+//        Team team = scoreboard.getTeam(teamName);
+//
+//        if (team == null) {
+//            team = scoreboard.registerNewTeam(teamName);
+//        }
+//
+//        // 使用兼容工具设置前缀
+//        TeamUtil.setPrefix(team, Component.text("§8[§b" + guild.getTag() + "§8] "));
+//
+//        // 添加所有成员
+//        for (GuildMember member : plugin.getGuildManager().getGuildMembers(guild.getId())) {
+//            Player player = Bukkit.getPlayer(member.getPlayerUuid());
+//            if (player != null && player.isOnline()) {
+//                team.addEntry(player.getName());
+//                player.setScoreboard(scoreboard);
+//            }
+//        }
+//    }
 
-    /**
-     * 创建公会队伍
-     * @param guild 公会对象
-     */
-    public void createTeam(Guild guild) {
-        String teamName = "guild_" + guild.getId();
-        Team team = scoreboard.getTeam(teamName);
+//    /**
+//     * 删除公会队伍
+//     * @param guildId 公会ID
+//     */
+//    public void removeTeam(int guildId) {
+//        String teamName = "guild_" + guildId;
+//        Team team = scoreboard.getTeam(teamName);
+//
+//        if (team != null) {
+//            team.unregister();
+//        }
+//    }
 
-        if (team == null) {
-            team = scoreboard.registerNewTeam(teamName);
-        }
+//    /**
+//     * 添加玩家到公会队伍
+//     * @param player 玩家
+//     * @param guildId 公会ID
+//     */
+//    public void addPlayerToTeam(Player player, int guildId) {
+//        String teamName = "guild_" + guildId;
+//        Team team = scoreboard.getTeam(teamName);
+//
+//        if (team != null) {
+//            team.addEntry(player.getName());
+//            player.setScoreboard(scoreboard);
+//        }
+//    }
 
-        // 使用兼容工具设置前缀
-        TeamUtil.setPrefix(team, Component.text("§8[§b" + guild.getTag() + "§8] "));
-
-        // 添加所有成员
-        for (GuildMember member : plugin.getGuildManager().getGuildMembers(guild.getId())) {
-            Player player = Bukkit.getPlayer(member.getPlayerUuid());
-            if (player != null && player.isOnline()) {
-                team.addEntry(player.getName());
-                player.setScoreboard(scoreboard);
-            }
-        }
-    }
-
-    /**
-     * 删除公会队伍
-     * @param guildId 公会ID
-     */
-    public void removeTeam(int guildId) {
-        String teamName = "guild_" + guildId;
-        Team team = scoreboard.getTeam(teamName);
-
-        if (team != null) {
-            team.unregister();
-        }
-    }
-
-    /**
-     * 添加玩家到公会队伍
-     * @param player 玩家
-     * @param guildId 公会ID
-     */
-    public void addPlayerToTeam(Player player, int guildId) {
-        String teamName = "guild_" + guildId;
-        Team team = scoreboard.getTeam(teamName);
-
-        if (team != null) {
-            team.addEntry(player.getName());
-            player.setScoreboard(scoreboard);
-        }
-    }
-
-    /**
-     * 从公会队伍中移除玩家
-     * @param player 玩家
-     */
-    public void removePlayerFromTeam(Player player) {
-        for (Team team : scoreboard.getTeams()) {
-            if (team.hasEntry(player.getName())) {
-                team.removeEntry(player.getName());
-            }
-        }
-
-        // 重置记分板
-        player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-    }
+//    /**
+//     * 从公会队伍中移除玩家
+//     * @param player 玩家
+//     */
+//    public void removePlayerFromTeam(Player player) {
+//        for (Team team : scoreboard.getTeams()) {
+//            if (team.hasEntry(player.getName())) {
+//                team.removeEntry(player.getName());
+//            }
+//        }
+//
+//        // 重置记分板
+//        player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+//    }
 
     /**
      * 获取玩家聊天模式

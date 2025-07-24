@@ -5,11 +5,11 @@ import cn.i7mc.sagaguild.data.dao.TaskDAO;
 import cn.i7mc.sagaguild.data.models.Guild;
 import cn.i7mc.sagaguild.data.models.GuildMember;
 import cn.i7mc.sagaguild.data.models.GuildTask;
+import cn.yvmou.ylib.api.scheduler.UniversalTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -25,7 +25,7 @@ public class TaskManager {
     private final Map<Integer, List<GuildTask>> guildTasks;
 
     // 任务检查任务
-    private BukkitTask taskCheckTask;
+    private UniversalTask taskCheckTask;
 
     // 随机任务生成器
     private final Random random;
@@ -119,7 +119,7 @@ public class TaskManager {
      */
     private void startTaskCheckTask() {
         // 每小时检查一次任务状态
-        taskCheckTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this::checkTasks, 20 * 60, 20 * 60 * 60);
+        taskCheckTask = SagaGuild.getYLib().getScheduler().runTimerAsync(this::checkTasks, 20 * 60, 20 * 60 * 60);
     }
 
     /**

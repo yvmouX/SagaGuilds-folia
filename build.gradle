@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'cn.i7mc'
-version = '1.0.9.11'
+version = '1.0.9.49'
 
 def readVersionFromFile() {
     def versionFile = file('version.txt')
@@ -31,6 +31,10 @@ repositories {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
+    maven {
+        name = 'jitpack'
+        url = 'https://jitpack.io'
+    }
 }
 
 dependencies {
@@ -39,6 +43,7 @@ dependencies {
     compileOnly 'net.kyori:adventure-api:4.14.0'
     compileOnly 'net.kyori:adventure-text-serializer-legacy:4.14.0'
     compileOnly 'net.kyori:adventure-text-minimessage:4.14.0'
+    implementation 'com.github.yvmouX:YLib:1.0.0-beta3'
 }
 
 def targetJavaVersion = 17

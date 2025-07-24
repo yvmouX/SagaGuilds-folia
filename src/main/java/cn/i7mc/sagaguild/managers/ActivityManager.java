@@ -7,13 +7,13 @@ import cn.i7mc.sagaguild.data.models.ActivityParticipant;
 import cn.i7mc.sagaguild.data.models.Guild;
 import cn.i7mc.sagaguild.data.models.GuildActivity;
 import cn.i7mc.sagaguild.data.models.GuildMember;
+import cn.yvmou.ylib.api.scheduler.UniversalTask;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Duration;
 import java.util.*;
@@ -31,7 +31,7 @@ public class ActivityManager {
     private final Map<Integer, List<GuildActivity>> guildActivities;
 
     // 活动通知任务
-    private BukkitTask notificationTask;
+    private UniversalTask notificationTask;
 
     // 活动通知时间（分钟）
     private final int[] notificationTimes = {60, 30, 15, 5, 1};
@@ -75,7 +75,7 @@ public class ActivityManager {
      */
     private void startNotificationTask() {
         // 每分钟检查一次活动状态
-        notificationTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this::checkActivities, 20 * 60, 20 * 60);
+        notificationTask = SagaGuild.getYLib().getScheduler().runTimerAsync(this::checkActivities, 20 * 60, 20 * 60);
     }
 
     /**

@@ -6,10 +6,10 @@ import cn.i7mc.sagaguild.data.models.CeasefireRequest;
 import cn.i7mc.sagaguild.data.models.Guild;
 import cn.i7mc.sagaguild.data.models.GuildMember;
 import cn.i7mc.sagaguild.data.models.GuildWar;
+import cn.yvmou.ylib.api.scheduler.UniversalTask;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -25,7 +25,7 @@ public class WarManager {
     private final Map<Integer, GuildWar> activeWars;
 
     // 战争任务
-    private final Map<Integer, BukkitTask> warTasks;
+    private final Map<Integer, UniversalTask> warTasks;
 
     // 战争邀请
     private final Map<Integer, Map<Integer, Long>> warInvitations;
@@ -242,10 +242,10 @@ public class WarManager {
      */
     private void startPreparationPhase(GuildWar war) {
         FileConfiguration config = plugin.getConfig();
-        int preparationTime = config.getInt("war.preparation-time", 5);
+        long preparationTime = config.getInt("war.preparation-time", 5);
 
         // 启动准备阶段任务
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        UniversalTask task = SagaGuild.getYLib().getScheduler().runLater(() -> {
             // 更新状态为进行中
             war.setStatus(GuildWar.Status.ONGOING);
             warDAO.updateWarStatus(war.getId(), GuildWar.Status.ONGOING);
@@ -267,10 +267,10 @@ public class WarManager {
      */
     private void startWarTask(GuildWar war) {
         FileConfiguration config = plugin.getConfig();
-        int warDuration = config.getInt("war.duration", 30);
+        long warDuration = config.getInt("war.duration", 30);
 
         // 启动战争结束任务
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        UniversalTask task = SagaGuild.getYLib().getScheduler().runLater(() -> {
             // 结束战争
             endWar(war);
 
@@ -299,7 +299,7 @@ public class WarManager {
         activeWars.remove(war.getId());
 
         // 取消任务
-        BukkitTask task = warTasks.remove(war.getId());
+        UniversalTask task = warTasks.remove(war.getId());
         if (task != null) {
             task.cancel();
         }

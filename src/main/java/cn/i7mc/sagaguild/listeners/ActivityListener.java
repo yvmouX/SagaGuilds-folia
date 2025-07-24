@@ -47,7 +47,7 @@ public class ActivityListener implements Listener {
         }
         
         // 延迟3秒发送通知，避免与其他加入消息冲突
-        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+        SagaGuild.getYLib().getScheduler().runLaterAsync(() -> {
             // 通知玩家即将开始的活动
             player.sendMessage(Component.text("=== 公会即将开始的活动 ===", NamedTextColor.GOLD));
             

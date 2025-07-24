@@ -1,0 +1,8 @@
+gradle/wrapper/gradle-wrapper.jar
+/.gradle
+/.idea
+/gradle
+version.txt
+gradlew.bat
+gradlew
+/build

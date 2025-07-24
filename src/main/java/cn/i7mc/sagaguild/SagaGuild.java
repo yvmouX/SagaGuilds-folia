@@ -17,6 +17,7 @@ import cn.i7mc.sagaguild.managers.*;
 import cn.i7mc.sagaguild.utils.InventoryUtil;
 import cn.i7mc.sagaguild.utils.ItemUtil;
 import cn.i7mc.sagaguild.utils.PlayerUtil;
+import cn.yvmou.ylib.YLib;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -26,6 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class SagaGuild extends JavaPlugin {
     // 单例模式
     private static SagaGuild instance;
+    private static YLib yLib;
 
     // 各管理器实例
     private ConfigManager configManager;
@@ -49,6 +51,7 @@ public class SagaGuild extends JavaPlugin {
     public void onEnable() {
         // 初始化单例
         instance = this;
+        yLib = new YLib(this);
 
         // 初始化配置
         configManager = new ConfigManager(this);
@@ -132,6 +135,8 @@ public class SagaGuild extends JavaPlugin {
     public static SagaGuild getInstance() {
         return instance;
     }
+
+    public static YLib getYLib() { return yLib;}
 
     // 获取各管理器的方法
     public ConfigManager getConfigManager() {

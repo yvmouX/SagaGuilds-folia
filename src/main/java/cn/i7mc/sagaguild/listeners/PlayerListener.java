@@ -53,7 +53,7 @@ public class PlayerListener implements Listener {
         if (member != null && !member.getPlayerName().equals(player.getName())) {
             member.setPlayerName(player.getName());
             // 异步更新数据库
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            SagaGuild.getYLib().getScheduler().runAsync(() -> {
                 plugin.getDatabaseManager().getConnection();
                 // TODO: 实现异步更新
             });

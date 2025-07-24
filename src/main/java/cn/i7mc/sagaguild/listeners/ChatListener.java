@@ -44,31 +44,31 @@ public class ChatListener implements Listener {
         }
     }
 
-    /**
-     * 玩家加入服务器事件
-     * @param event 事件对象
-     */
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
+//    /**
+//     * 玩家加入服务器事件
+//     * @param event 事件对象
+//     */
+//    @EventHandler
+//    public void onPlayerJoin(PlayerJoinEvent event) {
+//        Player player = event.getPlayer();
+//
+//        // 检查玩家是否在公会中
+//        Guild guild = plugin.getGuildManager().getPlayerGuild(player.getUniqueId());
+//        if (guild != null) {
+//            // 添加玩家到公会队伍
+//            plugin.getChatManager().addPlayerToTeam(player, guild.getId());
+//        }
+//    }
 
-        // 检查玩家是否在公会中
-        Guild guild = plugin.getGuildManager().getPlayerGuild(player.getUniqueId());
-        if (guild != null) {
-            // 添加玩家到公会队伍
-            plugin.getChatManager().addPlayerToTeam(player, guild.getId());
-        }
-    }
-
-    /**
-     * 玩家离开服务器事件
-     * @param event 事件对象
-     */
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-
-        // 从公会队伍中移除玩家
-        plugin.getChatManager().removePlayerFromTeam(player);
-    }
+//    /**
+//     * 玩家离开服务器事件
+//     * @param event 事件对象
+//     */
+//    @EventHandler
+//    public void onPlayerQuit(PlayerQuitEvent event) {
+//        Player player = event.getPlayer();
+//
+//        // 从公会队伍中移除玩家
+//        plugin.getChatManager().removePlayerFromTeam(player);
+//    }
 }
